@@ -7,6 +7,7 @@ class DailySales {
   final int gcashPhp;
   final int codPhp;
   final Map<String, int> cashExpectedByRider;
+  final Map<String, int> cashCollectedByRider;
   final Map<String, int> quantityByItem;
 
   const DailySales({
@@ -15,6 +16,7 @@ class DailySales {
     required this.gcashPhp,
     required this.codPhp,
     required this.cashExpectedByRider,
+    required this.cashCollectedByRider,
     required this.quantityByItem,
   });
 
@@ -22,6 +24,7 @@ class DailySales {
   factory DailySales.fromOrders(Iterable<Order> orders) {
     var count = 0, total = 0, gcash = 0, cod = 0;
     final byRider = <String, int>{};
+    final collected = <String, int>{};
     final byItem = <String, int>{};
     for (final o in orders.where((o) => o.status == OrderStatus.delivered)) {
       count++;
@@ -32,6 +35,9 @@ class DailySales {
         cod += o.totalPhp;
         final rider = o.riderId ?? 'unassigned';
         byRider[rider] = (byRider[rider] ?? 0) + o.totalPhp;
+        if (o.cashCollected) {
+          collected[rider] = (collected[rider] ?? 0) + o.totalPhp;
+        }
       }
       for (final line in o.lines) {
         byItem[line.name] = (byItem[line.name] ?? 0) + line.quantity;
@@ -43,6 +49,7 @@ class DailySales {
       gcashPhp: gcash,
       codPhp: cod,
       cashExpectedByRider: byRider,
+      cashCollectedByRider: collected,
       quantityByItem: byItem,
     );
   }

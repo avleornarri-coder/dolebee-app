@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 
 import '../models/delivery_zone.dart';
 import '../models/order.dart';
+import '../state/app_store.dart';
 import '../state/cart.dart';
 import 'gcash_payment_screen.dart';
 import 'order_status_screen.dart';
 import 'theme.dart';
 
 class CartScreen extends StatefulWidget {
+  final AppStore store;
   final Cart cart;
-  const CartScreen({super.key, required this.cart});
+  const CartScreen({super.key, required this.store, required this.cart});
 
   @override
   State<CartScreen> createState() => _CartScreenState();
@@ -38,6 +40,7 @@ class _CartScreenState extends State<CartScreen> {
   Order _buildOrder() => Order(
         id: 'DB-${DateTime.now().millisecondsSinceEpoch % 100000}',
         customerId: _phone.text,
+        customerName: _name.text.trim(),
         lines: cart.toLines(),
         deliveryFeePhp: _zone.feePhp,
         payment: _payment,
@@ -54,10 +57,14 @@ class _CartScreenState extends State<CartScreen> {
   void _placeOrder() {
     if (!_form.currentState!.validate()) return;
     final order = _buildOrder();
-    final next = _payment == PaymentMethod.gcashQr
-        ? GcashPaymentScreen(order: order, cart: cart)
-        : OrderStatusScreen(order: order);
-    if (_payment == PaymentMethod.cashOnDelivery) cart.clear();
+    final Widget next;
+    if (_payment == PaymentMethod.gcashQr) {
+      next = GcashPaymentScreen(store: widget.store, order: order, cart: cart);
+    } else {
+      widget.store.placeOrder(order);
+      cart.clear();
+      next = OrderStatusScreen(store: widget.store, orderId: order.id);
+    }
     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => next));
   }
 

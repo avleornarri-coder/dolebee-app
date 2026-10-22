@@ -44,6 +44,7 @@ class OrderLine {
 class Order {
   final String id;
   final String customerId;
+  final String customerName;
   final List<OrderLine> lines;
   final int deliveryFeePhp;
   final PaymentMethod payment;
@@ -61,6 +62,7 @@ class Order {
   const Order({
     required this.id,
     required this.customerId,
+    this.customerName = '',
     required this.lines,
     required this.deliveryFeePhp,
     required this.payment,
@@ -79,8 +81,35 @@ class Order {
   int get subtotalPhp => lines.fold(0, (sum, line) => sum + line.totalPhp);
   int get totalPhp => subtotalPhp + deliveryFeePhp;
 
+  Order copyWith({
+    OrderStatus? status,
+    String? riderId,
+    bool? cashCollected,
+    String? gcashReference,
+    String? receiptPhotoUrl,
+  }) =>
+      Order(
+        id: id,
+        customerId: customerId,
+        customerName: customerName,
+        lines: lines,
+        deliveryFeePhp: deliveryFeePhp,
+        payment: payment,
+        status: status ?? this.status,
+        address: address,
+        landmark: landmark,
+        lat: lat,
+        lng: lng,
+        createdAt: createdAt,
+        gcashReference: gcashReference ?? this.gcashReference,
+        receiptPhotoUrl: receiptPhotoUrl ?? this.receiptPhotoUrl,
+        riderId: riderId ?? this.riderId,
+        cashCollected: cashCollected ?? this.cashCollected,
+      );
+
   Map<String, dynamic> toMap() => {
         'customerId': customerId,
+        'customerName': customerName,
         'lines': lines.map((l) => l.toMap()).toList(),
         'deliveryFeePhp': deliveryFeePhp,
         'payment': payment.name,
@@ -101,6 +130,7 @@ class Order {
   factory Order.fromMap(String id, Map<String, dynamic> data) => Order(
         id: id,
         customerId: data['customerId'] as String,
+        customerName: data['customerName'] as String? ?? '',
         lines: (data['lines'] as List)
             .map((l) => OrderLine.fromMap(Map<String, dynamic>.from(l)))
             .toList(),

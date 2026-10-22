@@ -9,6 +9,8 @@ void main() {
     addTearDown(tester.view.reset);
 
     await tester.pumpWidget(const DolebeeApp());
+    await tester.tap(find.text('Customer'));
+    await tester.pumpAndSettle();
     await tester.tap(find.byTooltip('Add 1pc Chicken with Rice'));
     await tester.pump();
     expect(find.textContaining('View cart · 1 items · ₱99'), findsOneWidget);

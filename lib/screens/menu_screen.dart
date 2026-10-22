@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
-import '../data/sample_menu.dart';
 import '../models/menu_item.dart';
+import '../state/app_store.dart';
 import '../state/cart.dart';
 import 'cart_screen.dart';
 import 'theme.dart';
 
 class MenuScreen extends StatefulWidget {
+  final AppStore store;
   final Cart cart;
-  const MenuScreen({super.key, required this.cart});
+  const MenuScreen({super.key, required this.store, required this.cart});
 
   @override
   State<MenuScreen> createState() => _MenuScreenState();
@@ -17,12 +18,16 @@ class MenuScreen extends StatefulWidget {
 class _MenuScreenState extends State<MenuScreen> {
   String _category = 'Chicken';
 
-  List<String> get _categories =>
-      sampleMenu.map((m) => m.category).toSet().toList();
-
   @override
-  Widget build(BuildContext context) {
-    final items = sampleMenu.where((m) => m.category == _category).toList();
+  Widget build(BuildContext context) => ListenableBuilder(
+        listenable: widget.store,
+        builder: (context, _) => _build(context),
+      );
+
+  Widget _build(BuildContext context) {
+    final categories = widget.store.categories;
+    if (!categories.contains(_category) && categories.isNotEmpty) _category = categories.first;
+    final items = widget.store.menu.where((m) => m.category == _category).toList();
     return Scaffold(
       appBar: AppBar(
         title: const Column(
@@ -41,7 +46,7 @@ class _MenuScreenState extends State<MenuScreen> {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               children: [
-                for (final c in _categories)
+                for (final c in categories)
                   Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: ChoiceChip(
@@ -76,7 +81,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   child: FilledButton(
                     style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
                     onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-                        builder: (_) => CartScreen(cart: widget.cart))),
+                        builder: (_) => CartScreen(store: widget.store, cart: widget.cart))),
                     child: Text(
                       'View cart · ${widget.cart.itemCount} items · ${peso(widget.cart.subtotalPhp)}',
                       style: const TextStyle(fontSize: 16),

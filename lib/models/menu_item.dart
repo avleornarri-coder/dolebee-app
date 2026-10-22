@@ -15,6 +15,16 @@ class MenuItem {
     this.soldOut = false,
   });
 
+  MenuItem copyWith({String? name, String? category, int? pricePhp, bool? soldOut}) =>
+      MenuItem(
+        id: id,
+        name: name ?? this.name,
+        category: category ?? this.category,
+        pricePhp: pricePhp ?? this.pricePhp,
+        photoUrl: photoUrl,
+        soldOut: soldOut ?? this.soldOut,
+      );
+
   factory MenuItem.fromMap(String id, Map<String, dynamic> data) => MenuItem(
         id: id,
         name: data['name'] as String,

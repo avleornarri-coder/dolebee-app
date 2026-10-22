@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/order.dart';
+import '../state/app_store.dart';
 import '../state/cart.dart';
 import 'order_status_screen.dart';
 import 'theme.dart';
@@ -9,9 +10,10 @@ import 'theme.dart';
 /// amount, and enters the 13-digit GCash reference number for the owner to
 /// check before cooking.
 class GcashPaymentScreen extends StatefulWidget {
+  final AppStore store;
   final Order order;
   final Cart cart;
-  const GcashPaymentScreen({super.key, required this.order, required this.cart});
+  const GcashPaymentScreen({super.key, required this.store, required this.order, required this.cart});
 
   @override
   State<GcashPaymentScreen> createState() => _GcashPaymentScreenState();
@@ -30,10 +32,15 @@ class _GcashPaymentScreenState extends State<GcashPaymentScreen> {
 
   void _submit() {
     if (!_form.currentState!.validate()) return;
+    widget.store.placeOrder(widget.order.copyWith(
+      gcashReference: _reference.text.replaceAll(' ', ''),
+      // Set to the Firebase Storage link once photo upload is added.
+      receiptPhotoUrl: _receiptAttached ? 'pending-upload' : null,
+    ));
     widget.cart.clear();
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => OrderStatusScreen(order: widget.order)),
-    );
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+      builder: (_) => OrderStatusScreen(store: widget.store, orderId: widget.order.id),
+    ));
   }
 
   @override
