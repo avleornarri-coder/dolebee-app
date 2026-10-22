@@ -44,6 +44,7 @@ class OrderLine {
 class Order {
   final String id;
   final String customerId;
+  final String customerName;
   final List<OrderLine> lines;
   final int deliveryFeePhp;
   final PaymentMethod payment;
@@ -55,12 +56,17 @@ class Order {
   final String? gcashReference;
   final String? receiptPhotoUrl;
   final String? riderId;
+  /// The delivery staff member got the cash from the customer.
   final bool cashCollected;
+
+  /// The owner confirmed the delivery staff member handed the cash over.
+  final bool cashRemitted;
   final DateTime createdAt;
 
   const Order({
     required this.id,
     required this.customerId,
+    this.customerName = '',
     required this.lines,
     required this.deliveryFeePhp,
     required this.payment,
@@ -74,13 +80,43 @@ class Order {
     this.receiptPhotoUrl,
     this.riderId,
     this.cashCollected = false,
+    this.cashRemitted = false,
   });
 
   int get subtotalPhp => lines.fold(0, (sum, line) => sum + line.totalPhp);
   int get totalPhp => subtotalPhp + deliveryFeePhp;
 
+  Order copyWith({
+    OrderStatus? status,
+    String? riderId,
+    bool? cashCollected,
+    bool? cashRemitted,
+    String? gcashReference,
+    String? receiptPhotoUrl,
+  }) =>
+      Order(
+        id: id,
+        customerId: customerId,
+        customerName: customerName,
+        lines: lines,
+        deliveryFeePhp: deliveryFeePhp,
+        payment: payment,
+        status: status ?? this.status,
+        address: address,
+        landmark: landmark,
+        lat: lat,
+        lng: lng,
+        createdAt: createdAt,
+        gcashReference: gcashReference ?? this.gcashReference,
+        receiptPhotoUrl: receiptPhotoUrl ?? this.receiptPhotoUrl,
+        riderId: riderId ?? this.riderId,
+        cashCollected: cashCollected ?? this.cashCollected,
+        cashRemitted: cashRemitted ?? this.cashRemitted,
+      );
+
   Map<String, dynamic> toMap() => {
         'customerId': customerId,
+        'customerName': customerName,
         'lines': lines.map((l) => l.toMap()).toList(),
         'deliveryFeePhp': deliveryFeePhp,
         'payment': payment.name,
@@ -93,6 +129,7 @@ class Order {
         'receiptPhotoUrl': receiptPhotoUrl,
         'riderId': riderId,
         'cashCollected': cashCollected,
+        'cashRemitted': cashRemitted,
         'subtotalPhp': subtotalPhp,
         'totalPhp': totalPhp,
         'createdAt': createdAt.toIso8601String(),
@@ -101,6 +138,7 @@ class Order {
   factory Order.fromMap(String id, Map<String, dynamic> data) => Order(
         id: id,
         customerId: data['customerId'] as String,
+        customerName: data['customerName'] as String? ?? '',
         lines: (data['lines'] as List)
             .map((l) => OrderLine.fromMap(Map<String, dynamic>.from(l)))
             .toList(),
@@ -115,6 +153,7 @@ class Order {
         receiptPhotoUrl: data['receiptPhotoUrl'] as String?,
         riderId: data['riderId'] as String?,
         cashCollected: data['cashCollected'] as bool? ?? false,
+        cashRemitted: data['cashRemitted'] as bool? ?? false,
         createdAt: DateTime.parse(data['createdAt'] as String),
       );
 }
