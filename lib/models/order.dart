@@ -56,7 +56,11 @@ class Order {
   final String? gcashReference;
   final String? receiptPhotoUrl;
   final String? riderId;
+  /// The delivery staff member got the cash from the customer.
   final bool cashCollected;
+
+  /// The owner confirmed the delivery staff member handed the cash over.
+  final bool cashRemitted;
   final DateTime createdAt;
 
   const Order({
@@ -76,6 +80,7 @@ class Order {
     this.receiptPhotoUrl,
     this.riderId,
     this.cashCollected = false,
+    this.cashRemitted = false,
   });
 
   int get subtotalPhp => lines.fold(0, (sum, line) => sum + line.totalPhp);
@@ -85,6 +90,7 @@ class Order {
     OrderStatus? status,
     String? riderId,
     bool? cashCollected,
+    bool? cashRemitted,
     String? gcashReference,
     String? receiptPhotoUrl,
   }) =>
@@ -105,6 +111,7 @@ class Order {
         receiptPhotoUrl: receiptPhotoUrl ?? this.receiptPhotoUrl,
         riderId: riderId ?? this.riderId,
         cashCollected: cashCollected ?? this.cashCollected,
+        cashRemitted: cashRemitted ?? this.cashRemitted,
       );
 
   Map<String, dynamic> toMap() => {
@@ -122,6 +129,7 @@ class Order {
         'receiptPhotoUrl': receiptPhotoUrl,
         'riderId': riderId,
         'cashCollected': cashCollected,
+        'cashRemitted': cashRemitted,
         'subtotalPhp': subtotalPhp,
         'totalPhp': totalPhp,
         'createdAt': createdAt.toIso8601String(),
@@ -145,6 +153,7 @@ class Order {
         receiptPhotoUrl: data['receiptPhotoUrl'] as String?,
         riderId: data['riderId'] as String?,
         cashCollected: data['cashCollected'] as bool? ?? false,
+        cashRemitted: data['cashRemitted'] as bool? ?? false,
         createdAt: DateTime.parse(data['createdAt'] as String),
       );
 }

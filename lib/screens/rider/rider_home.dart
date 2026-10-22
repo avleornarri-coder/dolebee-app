@@ -19,17 +19,32 @@ class RiderHome extends StatelessWidget {
         listenable: store,
         builder: (context, _) {
           final orders = store.ordersForRider(rider.id);
-          if (orders.isEmpty) {
-            return const Center(
-              child: Text('No deliveries assigned to you right now.',
-                  style: TextStyle(color: Colors.black54)),
-            );
-          }
-          return ListView.separated(
+          final onHand = store.cashOnHand(rider.id);
+          return ListView(
             padding: const EdgeInsets.all(12),
-            itemCount: orders.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 8),
-            itemBuilder: (context, i) => _DeliveryCard(store: store, order: orders[i]),
+            children: [
+              if (onHand > 0)
+                Card(
+                  color: Colors.green[50],
+                  child: ListTile(
+                    leading: const Icon(Icons.payments, color: Colors.green),
+                    title: Text('Cash on hand: ${peso(onHand)}',
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
+                    subtitle: const Text('Hand this to the owner. It clears once they tap "Received".'),
+                  ),
+                ),
+              if (orders.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.only(top: 48),
+                  child: Text('No deliveries assigned to you right now.',
+                      textAlign: TextAlign.center, style: TextStyle(color: Colors.black54)),
+                ),
+              for (final order in orders)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: _DeliveryCard(store: store, order: order),
+                ),
+            ],
           );
         },
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../services/daily_sales.dart';
 import '../../state/app_store.dart';
 import '../theme.dart';
 
@@ -37,18 +38,27 @@ class SalesScreen extends StatelessWidget {
                   ]),
                 ),
               ),
+              if (sales.pendingCount > 0)
+                Card(
+                  color: Colors.white,
+                  child: ListTile(
+                    leading: const Icon(Icons.hourglass_top, color: brandOrange),
+                    title: Text('${sales.pendingCount} ${sales.pendingCount == 1 ? 'order' : 'orders'} '
+                        '(${peso(sales.pendingPhp)}) not delivered yet'),
+                    subtitle: const Text('Added to today\'s sales once marked delivered.'),
+                  ),
+                ),
               Row(children: [
                 Expanded(child: _Tile(label: 'GCash', value: peso(sales.gcashPhp), color: Colors.blue)),
                 Expanded(child: _Tile(label: 'Cash on delivery', value: peso(sales.codPhp), color: Colors.green)),
               ]),
               _Section(
-                title: 'Cash to collect from delivery staff',
+                title: 'Cash from delivery staff',
                 children: [
-                  if (sales.cashExpectedByRider.isEmpty)
-                    const Text('No cash deliveries yet today.', style: TextStyle(color: Colors.black54)),
-                  for (final e in sales.cashExpectedByRider.entries)
-                    _line(store.riderName(e.key),
-                        '${peso(sales.cashCollectedByRider[e.key] ?? 0)} of ${peso(e.value)} received'),
+                  const Text('Tap "Received" when the cash is in your hands.',
+                      style: TextStyle(color: Colors.black54)),
+                  const SizedBox(height: 4),
+                  for (final rider in store.riders) _cashRow(rider, sales),
                 ],
               ),
               _Section(
@@ -63,6 +73,35 @@ class SalesScreen extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+
+  Widget _cashRow(Rider rider, DailySales sales) {
+    final onHand = store.cashOnHand(rider.id);
+    final collected = sales.cashCollectedByRider[rider.id] ?? 0;
+    final remitted = sales.cashRemittedByRider[rider.id] ?? 0;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(children: [
+        Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(rider.name, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+            Text('Collected today ${peso(collected)} · handed over ${peso(remitted)}',
+                style: const TextStyle(color: Colors.black54)),
+          ]),
+        ),
+        if (onHand > 0)
+          FilledButton(
+            onPressed: () => store.remitCash(rider.id),
+            child: Text('Received ${peso(onHand)}'),
+          )
+        else
+          const Row(mainAxisSize: MainAxisSize.min, children: [
+            Icon(Icons.check_circle, color: Colors.green, size: 18),
+            SizedBox(width: 4),
+            Text('Nothing to hand over', style: TextStyle(color: Colors.green)),
+          ]),
+      ]),
     );
   }
 

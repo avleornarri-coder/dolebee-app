@@ -66,10 +66,34 @@ void main() {
     await tester.pump();
     expect(find.text('No deliveries assigned to you right now.'), findsOneWidget);
 
+    expect(find.text('Cash on hand: ₱218'), findsOneWidget);
+
     await _show(tester, SalesScreen(store: store));
     expect(find.text('₱218'), findsWidgets);
-    expect(find.text('₱218 of ₱218 received'), findsOneWidget);
     expect(find.text('2 sold'), findsOneWidget);
+    expect(find.text('Collected today ₱218 · handed over ₱0'), findsOneWidget);
+
+    // The owner confirms the cash was handed over.
+    await tester.tap(find.text('Received ₱218'));
+    await tester.pump();
+    expect(find.text('Collected today ₱218 · handed over ₱218'), findsOneWidget);
+    expect(store.cashOnHand('r1'), 0);
+  });
+
+  testWidgets('sales show orders not yet delivered, and the owner can mark one delivered',
+      (tester) async {
+    final store = AppStore()
+      ..placeOrder(_order('DB-4', PaymentMethod.cashOnDelivery))
+      ..sendOut('DB-4', 'r1');
+    await _show(tester, SalesScreen(store: store));
+    expect(find.text('1 order (₱218) not delivered yet'), findsOneWidget);
+    expect(find.text('0 delivered orders'), findsOneWidget);
+
+    await _show(tester, OrdersScreen(store: store));
+    await tester.tap(find.text('Mark delivered (cash with Jun)'));
+    await tester.pump();
+    expect(store.orderById('DB-4')!.status, OrderStatus.delivered);
+    expect(store.cashOnHand('r1'), 218);
   });
 
   testWidgets('owner changes a price and marks an item sold out', (tester) async {

@@ -89,6 +89,22 @@ class AppStore extends ChangeNotifier {
             cashCollected: o.payment == PaymentMethod.cashOnDelivery && cashReceived,
           ));
 
+  /// Cash this delivery staff member collected and still holds.
+  int cashOnHand(String riderId) => _orders
+      .where((o) => o.riderId == riderId && o.cashCollected && !o.cashRemitted)
+      .fold(0, (sum, o) => sum + o.totalPhp);
+
+  /// The owner received all the cash this delivery staff member holds.
+  void remitCash(String riderId) {
+    for (var i = 0; i < _orders.length; i++) {
+      final o = _orders[i];
+      if (o.riderId == riderId && o.cashCollected && !o.cashRemitted) {
+        _orders[i] = o.copyWith(cashRemitted: true);
+      }
+    }
+    notifyListeners();
+  }
+
   void saveMenuItem(MenuItem item) {
     final i = _menu.indexWhere((m) => m.id == item.id);
     if (i < 0) {

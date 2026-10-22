@@ -150,7 +150,16 @@ class _OrderCard extends StatelessWidget {
           ]),
         ];
       case OrderStatus.outForDelivery:
-        return [Text('With ${store.riderName(order.riderId)}')];
+        final cod = order.payment == PaymentMethod.cashOnDelivery;
+        return [
+          Text('With ${store.riderName(order.riderId)}. They tap "Delivered" when done.'),
+          const SizedBox(height: 6),
+          OutlinedButton(
+            // For when the delivery staff member can't update the app themselves.
+            onPressed: () => store.markDelivered(order.id, cashReceived: cod),
+            child: Text(cod ? 'Mark delivered (cash with ${store.riderName(order.riderId)})' : 'Mark delivered'),
+          ),
+        ];
       default:
         return const [];
     }
