@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../models/menu_item.dart';
+import '../models/order.dart';
 import '../state/app_store.dart';
 import '../state/cart.dart';
 import 'cart_screen.dart';
+import 'my_orders_screen.dart';
+import 'order_status_screen.dart';
 import 'theme.dart';
 
 class MenuScreen extends StatefulWidget {
@@ -28,6 +31,7 @@ class _MenuScreenState extends State<MenuScreen> {
     final categories = widget.store.categories;
     if (!categories.contains(_category) && categories.isNotEmpty) _category = categories.first;
     final items = widget.store.menu.where((m) => m.category == _category).toList();
+    final active = widget.store.customerActiveOrders;
     return Scaffold(
       appBar: AppBar(
         title: const Column(
@@ -37,9 +41,21 @@ class _MenuScreenState extends State<MenuScreen> {
             Text('Poblacion, Hinunangan · Open until 9 PM', style: TextStyle(fontSize: 12)),
           ],
         ),
+        actions: [
+          IconButton(
+            tooltip: 'My orders',
+            icon: Badge(
+              isLabelVisible: active.isNotEmpty,
+              label: Text('${active.length}'),
+              child: const Icon(Icons.receipt_long),
+            ),
+            onPressed: () => _openMyOrders(context),
+          ),
+        ],
       ),
       body: Column(
         children: [
+          if (active.isNotEmpty) _ActiveOrderBanner(store: widget.store, order: active.first),
           SizedBox(
             height: 56,
             child: ListView(
@@ -92,6 +108,41 @@ class _MenuScreenState extends State<MenuScreen> {
       ),
     );
   }
+
+  void _openMyOrders(BuildContext context) => Navigator.of(context)
+      .push(MaterialPageRoute(builder: (_) => MyOrdersScreen(store: widget.store)));
+}
+
+/// Shows the customer's latest order in progress so they can get back to
+/// its status at any time.
+class _ActiveOrderBanner extends StatelessWidget {
+  final AppStore store;
+  final Order order;
+  const _ActiveOrderBanner({required this.store, required this.order});
+
+  @override
+  Widget build(BuildContext context) => Material(
+        color: brandOrange.withValues(alpha: 0.12),
+        child: InkWell(
+          onTap: () => Navigator.of(context).push(MaterialPageRoute(
+              builder: (_) => OrderStatusScreen(store: store, orderId: order.id))),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(children: [
+              const Icon(Icons.delivery_dining, color: brandOrange),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text('Order ${order.id}', style: const TextStyle(fontWeight: FontWeight.w600)),
+                  Text(customerStatusLabel(order.status)),
+                ]),
+              ),
+              const Text('View status', style: TextStyle(color: brandOrange, fontWeight: FontWeight.w600)),
+              const Icon(Icons.chevron_right, color: brandOrange),
+            ]),
+          ),
+        ),
+      );
 }
 
 class _MenuCard extends StatelessWidget {

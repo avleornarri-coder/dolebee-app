@@ -28,5 +28,19 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Order received'), findsOneWidget);
     expect(find.text('1 × 1pc Chicken with Rice'), findsOneWidget);
+
+    // After closing the status screen, the customer can get back to it.
+    await tester.tap(find.byTooltip('Back to menu'));
+    await tester.pumpAndSettle();
+    expect(find.text('View status'), findsOneWidget);
+    await tester.tap(find.text('View status'));
+    await tester.pumpAndSettle();
+    expect(find.text('Order received'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Back to menu'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('My orders'));
+    await tester.pumpAndSettle();
+    expect(find.text('Order received'), findsOneWidget);
   });
 }

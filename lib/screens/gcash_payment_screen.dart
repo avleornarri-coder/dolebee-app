@@ -32,6 +32,7 @@ class _GcashPaymentScreenState extends State<GcashPaymentScreen> {
 
   void _submit() {
     if (!_form.currentState!.validate()) return;
+    widget.store.customerPhone = widget.order.customerId;
     widget.store.placeOrder(widget.order.copyWith(
       gcashReference: _reference.text.replaceAll(' ', ''),
       // Set to the Firebase Storage link once photo upload is added.

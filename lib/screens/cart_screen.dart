@@ -61,7 +61,9 @@ class _CartScreenState extends State<CartScreen> {
     if (_payment == PaymentMethod.gcashQr) {
       next = GcashPaymentScreen(store: widget.store, order: order, cart: cart);
     } else {
-      widget.store.placeOrder(order);
+      widget.store
+        ..customerPhone = order.customerId
+        ..placeOrder(order);
       cart.clear();
       next = OrderStatusScreen(store: widget.store, orderId: order.id);
     }

@@ -19,6 +19,10 @@ class AppStore extends ChangeNotifier {
   final List<Order> _orders = [];
   final List<Rider> riders = const [Rider('r1', 'Jun'), Rider('r2', 'Rey')];
 
+  /// The customer using this phone. Until login is added, the mobile
+  /// number from their last order stands in for their account.
+  String? customerPhone;
+
   List<MenuItem> get menu => List.unmodifiable(_menu);
   List<Order> get orders => List.unmodifiable(_orders.reversed);
 
@@ -51,6 +55,14 @@ class AppStore extends ChangeNotifier {
       o.createdAt.year == day.year &&
       o.createdAt.month == day.month &&
       o.createdAt.day == day.day));
+
+  /// This customer's orders, newest first.
+  List<Order> get customerOrders =>
+      orders.where((o) => o.customerId == customerPhone).toList();
+
+  List<Order> get customerActiveOrders => customerOrders
+      .where((o) => o.status != OrderStatus.delivered && o.status != OrderStatus.cancelled)
+      .toList();
 
   void placeOrder(Order order) {
     _orders.add(order);

@@ -4,6 +4,16 @@ import '../models/order.dart';
 import '../state/app_store.dart';
 import 'theme.dart';
 
+/// What the customer sees for each order status.
+String customerStatusLabel(OrderStatus status) => switch (status) {
+      OrderStatus.awaitingPayment => 'Checking GCash payment',
+      OrderStatus.received => 'Order received',
+      OrderStatus.cooking => 'Frying your chicken',
+      OrderStatus.outForDelivery => 'On the way',
+      OrderStatus.delivered => 'Delivered',
+      OrderStatus.cancelled => 'Cancelled',
+    };
+
 /// Live order progress, updated as the owner and delivery staff move the
 /// order along.
 class OrderStatusScreen extends StatelessWidget {
