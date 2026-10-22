@@ -1,0 +1,33 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function role() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+    function isOwner() { return signedIn() && role() == 'owner'; }
+    function isRider() { return signedIn() && role() == 'rider'; }
+
+    match /users/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isOwner());
+      // Customers create their own profile; roles are set by the owner only.
+      allow create: if signedIn() && request.auth.uid == uid
+                    && request.resource.data.role == 'customer';
+      allow update: if isOwner();
+    }
+
+    match /menu/{itemId} {
+      allow read: if true;
+      allow write: if isOwner();
+    }
+
+    match /orders/{orderId} {
+      allow create: if signedIn() && request.resource.data.customerId == request.auth.uid;
+      allow read: if signedIn() && (resource.data.customerId == request.auth.uid
+                    || isOwner()
+                    || (isRider() && resource.data.riderId == request.auth.uid));
+      allow update: if isOwner()
+                    || (isRider() && resource.data.riderId == request.auth.uid);
+    }
+  }
+}
