@@ -11,9 +11,16 @@ Phone ordering and delivery app for Dolebee fried chicken in Poblacion, Hinunang
 
 Payments at launch: GCash by manual QR (customer enters the GCash reference number, owner confirms) and cash on delivery.
 
+## Screens
+
+| Menu | Cart | GCash payment | Order status |
+| --- | --- | --- | --- |
+| ![Menu](docs/screenshots/1-menu.png) | ![Cart](docs/screenshots/3-cart-top.png) | ![GCash](docs/screenshots/5-gcash.png) | ![Status](docs/screenshots/6-status.png) |
+
+The menu uses sample items and prices until the owner's real menu is loaded from Firebase.
+
 ## Getting started
 
 1. Install Flutter: https://docs.flutter.dev/get-started/install
-2. Generate the Android project files in this folder: `flutter create --platforms=android .`
-3. Create a Firebase project, then run `dart pub global activate flutterfire_cli` and `flutterfire configure`.
-4. `flutter pub get`, then `flutter test` and `flutter run`.
+2. Create a Firebase project, then run `dart pub global activate flutterfire_cli` and `flutterfire configure`.
+3. `flutter pub get`, then `flutter test` and `flutter run`.

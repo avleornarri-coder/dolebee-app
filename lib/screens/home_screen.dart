@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
 
-/// Placeholder entry screen. Login routes each user to the customer, owner,
-/// or delivery staff screens once Firebase Auth is connected.
-class HomeScreen extends StatelessWidget {
+import '../state/cart.dart';
+import 'menu_screen.dart';
+
+/// Entry screen. Once Firebase Auth is connected, login routes owners and
+/// delivery staff to their own screens; customers land on the menu.
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Dolebee Fried Chicken')),
-      body: const Center(
-        child: Padding(
-          padding: EdgeInsets.all(24),
-          child: Text(
-            'Order crispy fried chicken, delivered in Hinunangan.',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 18),
-          ),
-        ),
-      ),
-    );
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final _cart = Cart();
+
+  @override
+  void dispose() {
+    _cart.dispose();
+    super.dispose();
   }
+
+  @override
+  Widget build(BuildContext context) => MenuScreen(cart: _cart);
 }
