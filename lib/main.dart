@@ -9,6 +9,7 @@ import 'screens/home_screen.dart';
 import 'screens/session_gate.dart';
 import 'screens/theme.dart';
 import 'services/auth_service.dart';
+import 'shop_config.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,20 +19,20 @@ Future<void> main() async {
     await Firebase.initializeApp(options: firebaseAndroidOptions);
     auth = AuthService(FirebaseAuth.instance, FirebaseFirestore.instance);
   }
-  runApp(DolebeeApp(auth: auth));
+  runApp(OrderingApp(auth: auth));
 }
 
-class DolebeeApp extends StatelessWidget {
+class OrderingApp extends StatelessWidget {
   /// Null for the offline preview, which lets you switch between roles.
   final AuthService? auth;
-  const DolebeeApp({super.key, this.auth});
+  const OrderingApp({super.key, this.auth});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Dolebee',
+      title: shop.name,
       debugShowCheckedModeBanner: false,
-      theme: dolebeeTheme(),
+      theme: appTheme(),
       home: auth == null ? const HomeScreen() : SessionGate(auth: auth!),
     );
   }

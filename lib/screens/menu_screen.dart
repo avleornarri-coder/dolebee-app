@@ -7,6 +7,7 @@ import '../state/cart.dart';
 import 'cart_screen.dart';
 import 'my_orders_screen.dart';
 import 'order_status_screen.dart';
+import '../shop_config.dart';
 import 'theme.dart';
 
 class MenuScreen extends StatefulWidget {
@@ -37,11 +38,11 @@ class _MenuScreenState extends State<MenuScreen> {
     final active = widget.store.customerActiveOrders;
     return Scaffold(
       appBar: AppBar(
-        title: const Column(
+        title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Dolebee Fried Chicken', style: TextStyle(fontWeight: FontWeight.bold)),
-            Text('Poblacion, Hinunangan · Open until 9 PM', style: TextStyle(fontSize: 12)),
+            Text(shop.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text('${shop.area} · ${shop.hours}', style: const TextStyle(fontSize: 12)),
           ],
         ),
         actions: [

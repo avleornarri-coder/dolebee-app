@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 
-/// Connection details for the Dolebee Firebase project. While this is null
+/// Connection details for the shop's Firebase project. While this is null
 /// the app runs as an offline preview with a sample menu, as on the web.
 ///
 /// To connect, replace null with the values from google-services.json:

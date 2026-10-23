@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-const brandOrange = Color(0xFFE8740C);
-const brandCream = Color(0xFFFFF6EA);
+import '../shop_config.dart';
+
+const brandOrange = shopBrandColor;
+const brandCream = shopBackground;
 
 final _peso = NumberFormat.currency(locale: 'en_PH', symbol: '₱', decimalDigits: 0);
 String peso(int amount) => _peso.format(amount);
 
-ThemeData dolebeeTheme() => ThemeData(
+ThemeData appTheme() => ThemeData(
       colorScheme: ColorScheme.fromSeed(seedColor: brandOrange, primary: brandOrange),
       scaffoldBackgroundColor: brandCream,
       useMaterial3: true,

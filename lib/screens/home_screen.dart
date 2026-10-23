@@ -5,6 +5,7 @@ import '../state/cart.dart';
 import 'menu_screen.dart';
 import 'owner/owner_home.dart';
 import 'rider/rider_home.dart';
+import '../shop_config.dart';
 import 'theme.dart';
 
 /// Preview entry: pick who you are. Once Firebase Auth is connected, login
@@ -39,10 +40,10 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             const SizedBox(height: 24),
             const Icon(Icons.set_meal, size: 72, color: brandOrange),
-            const Text('Dolebee Fried Chicken',
+            Text(shop.name,
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
-            const Text('Poblacion, Hinunangan',
+            Text(shop.area,
                 textAlign: TextAlign.center, style: TextStyle(color: Colors.black54)),
             const SizedBox(height: 32),
             const Text('Preview as:', style: TextStyle(fontWeight: FontWeight.w600)),

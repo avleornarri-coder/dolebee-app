@@ -114,7 +114,7 @@ class _CartScreenState extends State<CartScreen> {
                     DropdownButtonFormField<DeliveryZone>(
                       initialValue: _zone,
                       isExpanded: true,
-                      decoration: const InputDecoration(labelText: 'Distance from Poblacion'),
+                      decoration: const InputDecoration(labelText: 'Distance from the store'),
                       items: [
                         for (final z in DeliveryZone.zones)
                           DropdownMenuItem(

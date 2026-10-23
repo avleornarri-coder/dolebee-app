@@ -8,7 +8,7 @@ void main() {
     tester.view.devicePixelRatio = 2.5;
     addTearDown(tester.view.reset);
 
-    await tester.pumpWidget(const DolebeeApp());
+    await tester.pumpWidget(const OrderingApp());
     await tester.tap(find.text('Customer'));
     await tester.pumpAndSettle();
     await tester.tap(find.byTooltip('Add 1pc Chicken with Rice'));
