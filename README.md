@@ -1,21 +1,6 @@
 # OrderLokal
 
-Phone ordering and delivery app for local shops. One Flutter app (Android first) on Firebase, with three roles: customer, owner, and delivery staff. Each shop gets its own copy of the app under its own name. The first is Dolebee Fried Chicken in Poblacion, Hinunangan, Southern Leyte.
-
-## Making the app for a shop
-
-- `lib/shop_config.dart`: the shop's name, area, opening hours and colors.
-- `android/app/build.gradle.kts`: `applicationId` set to `com.orderlokal.<shop>`, for example `com.orderlokal.dolebee`.
-- `lib/firebase_config.dart`: the shop's own Firebase project, so each shop's orders stay separate.
-- `android/app/src/main/AndroidManifest.xml`: `android:label`, the name under the app icon.
-
-## What is here
-
-- `lib/models/` holds menu items, orders, and delivery zones (PHP 20 up to 2 km, PHP 40 up to 5 km, PHP 60 up to 8 km).
-- `lib/services/daily_sales.dart` computes the owner's daily sales and the monthly app fee.
-- `firestore.rules` restricts who can read and change orders and menu items.
-- `lib/screens/` has the customer screens, the owner screens (`owner/`: orders, daily sales, menu editor), and the delivery staff screen (`rider/`).
-- `test/` covers zone fees, daily sales, the app fee, and the customer, owner, and delivery staff flows.
+Phone ordering and delivery app for local shops. One Flutter app (Android first) on Firebase, with three roles: customer, owner, and delivery staff. Nothing in the code is tied to one shop: the owner enters the shop's name, area, and opening hours in the Shop tab, and the menu in the Menu tab.
 
 Payments at launch: GCash by manual QR (customer enters the GCash reference number, owner confirms) and cash on delivery.
 
@@ -31,7 +16,7 @@ Payments at launch: GCash by manual QR (customer enters the GCash reference numb
 
 The menu uses sample items and prices; the owner replaces them in the Menu tab. The web preview has no login: its first screen lets you try the app as a customer, the owner, or a delivery staff member, with everything kept in memory.
 
-On a phone connected to Firebase, customers order without an account. The owner and delivery staff sign in from the menu's "Staff login". The first person to sign in there sets up the owner account, and the owner adds delivery staff logins in the Team tab.
+On a phone connected to Firebase, customers order without an account. The owner and delivery staff sign in from the menu's "Staff login". The first person to sign in there sets up the owner account, and the owner adds delivery staff logins in the Shop tab.
 
 ## Getting started
 
@@ -40,7 +25,7 @@ On a phone connected to Firebase, customers order without an account. The owner 
 
 ## Connect Firebase
 
-1. In the Firebase console, create a project and add an Android app with the package name from `applicationId`, `com.orderlokal.dolebee` for Dolebee.
+1. In the Firebase console, create a project and add an Android app with the package name `com.orderlokal.app`.
 2. Turn on Authentication with the Anonymous and Email/Password sign-in methods.
 3. Create a Firestore database, then paste `firestore.rules` into its Rules tab and publish.
 4. Download `google-services.json` and copy its values into `lib/firebase_config.dart`. The file has the field names to look for.

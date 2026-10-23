@@ -1,5 +1,6 @@
 import '../models/menu_item.dart';
 import '../models/order.dart';
+import '../models/shop_profile.dart';
 
 class Rider {
   final String id;
@@ -10,6 +11,9 @@ class Rider {
 /// Where the menu, orders, and delivery staff are stored. The app uses
 /// Firebase on phones; the web preview and tests keep everything in memory.
 abstract class Backend {
+  Stream<ShopProfile> watchShop();
+  Future<void> saveShop(ShopProfile shop);
+
   Stream<List<MenuItem>> watchMenu();
 
   /// All orders for the owner and delivery staff; only their own orders for

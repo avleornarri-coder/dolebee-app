@@ -57,6 +57,6 @@ jobs:
       - run: flutter build appbundle --release --build-number=${{ github.run_number }}
       - uses: actions/upload-artifact@v4
         with:
-          name: dolebee-${{ github.run_number }}
+          name: orderlokal-${{ github.run_number }}
           path: build/app/outputs/bundle/release/app-release.aab
           retention-days: 30

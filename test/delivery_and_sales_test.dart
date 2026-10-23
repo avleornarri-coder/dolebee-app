@@ -1,6 +1,6 @@
-import 'package:dolebee_app/models/delivery_zone.dart';
-import 'package:dolebee_app/models/order.dart';
-import 'package:dolebee_app/services/daily_sales.dart';
+import 'package:orderlokal/models/delivery_zone.dart';
+import 'package:orderlokal/models/order.dart';
+import 'package:orderlokal/services/daily_sales.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Order _order(PaymentMethod payment, OrderStatus status, {String? rider}) =>

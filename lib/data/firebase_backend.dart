@@ -4,11 +4,12 @@ import 'package:firebase_core/firebase_core.dart';
 
 import '../models/menu_item.dart';
 import '../models/order.dart';
+import '../models/shop_profile.dart';
 import 'backend.dart';
 
 /// Stores the menu, orders, and staff in Cloud Firestore.
 ///
-/// Collections: `menu/{itemId}`, `orders/{orderId}`, and `users/{uid}` with
+/// Collections: `config/shop` (the shop's name and hours), `menu/{itemId}`, `orders/{orderId}`, and `users/{uid}` with
 /// a `role` of owner, rider, or customer. See firestore.rules.
 class FirebaseBackend implements Backend {
   final FirebaseFirestore db;
@@ -20,6 +21,13 @@ class FirebaseBackend implements Backend {
   final String? riderUid;
 
   FirebaseBackend(this.db, {this.customerUid, this.riderUid});
+
+  @override
+  Stream<ShopProfile> watchShop() => db.doc('config/shop').snapshots().map(
+      (s) => s.exists ? ShopProfile.fromMap(s.data()!) : ShopProfile.empty);
+
+  @override
+  Future<void> saveShop(ShopProfile shop) => db.doc('config/shop').set(shop.toMap());
 
   @override
   Stream<List<MenuItem>> watchMenu() => db.collection('menu').orderBy('name').snapshots().map(

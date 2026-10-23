@@ -8,6 +8,12 @@ service cloud.firestore {
     function isOwner() { return signedIn() && role() == 'owner'; }
     function isRider() { return signedIn() && role() == 'rider'; }
 
+    // The shop's name, area, and hours, shown on the menu.
+    match /config/shop {
+      allow read: if true;
+      allow write: if isOwner();
+    }
+
     // Set once, when the owner account is created.
     match /config/store {
       allow read: if signedIn();

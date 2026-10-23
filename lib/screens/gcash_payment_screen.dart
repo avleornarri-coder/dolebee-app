@@ -4,7 +4,6 @@ import '../models/order.dart';
 import '../state/app_store.dart';
 import '../state/cart.dart';
 import 'order_status_screen.dart';
-import '../shop_config.dart';
 import 'theme.dart';
 
 /// Manual GCash payment: the customer scans the store's QR, pays the exact
@@ -74,7 +73,7 @@ class _GcashPaymentScreenState extends State<GcashPaymentScreen> {
                     child: const Icon(Icons.qr_code_2, size: 160, color: Color(0xFF007DFE)),
                   ),
                   const SizedBox(height: 8),
-                  Text('${shop.name} · GCash'),
+                  Text('${widget.store.shop.name} · GCash'),
                 ]),
               ),
             ),

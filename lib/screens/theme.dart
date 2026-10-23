@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../shop_config.dart';
-
-const brandOrange = shopBrandColor;
-const brandCream = shopBackground;
+const brandOrange = Color(0xFFE8740C);
+const brandCream = Color(0xFFFFF6EA);
 
 final _peso = NumberFormat.currency(locale: 'en_PH', symbol: '₱', decimalDigits: 0);
 String peso(int amount) => _peso.format(amount);

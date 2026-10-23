@@ -1,5 +1,5 @@
-name: dolebee_app
-description: Ordering and delivery app for Dolebee fried chicken, Hinunangan, Southern Leyte.
+name: orderlokal
+description: OrderLokal, ordering and delivery app for local shops.
 publish_to: "none"
 version: 0.1.0+1
 

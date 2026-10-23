@@ -25,8 +25,7 @@ android {
 
     defaultConfig {
         // The Play Store and Firebase know the app by this id; it can't change after the first upload.
-        // Each shop gets its own: com.orderlokal.<shop>.
-        applicationId = "com.orderlokal.dolebee"
+        applicationId = "com.orderlokal.app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

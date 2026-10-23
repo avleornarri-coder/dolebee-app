@@ -7,7 +7,6 @@ import '../state/cart.dart';
 import 'cart_screen.dart';
 import 'my_orders_screen.dart';
 import 'order_status_screen.dart';
-import '../shop_config.dart';
 import 'theme.dart';
 
 class MenuScreen extends StatefulWidget {
@@ -41,8 +40,9 @@ class _MenuScreenState extends State<MenuScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(shop.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-            Text('${shop.area} · ${shop.hours}', style: const TextStyle(fontSize: 12)),
+            Text(widget.store.shop.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+            if (widget.store.shop.subtitle.isNotEmpty)
+              Text(widget.store.shop.subtitle, style: const TextStyle(fontSize: 12)),
           ],
         ),
         actions: [

@@ -9,7 +9,6 @@ import 'screens/home_screen.dart';
 import 'screens/session_gate.dart';
 import 'screens/theme.dart';
 import 'services/auth_service.dart';
-import 'shop_config.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,7 +29,7 @@ class OrderingApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: shop.name,
+      title: 'OrderLokal',
       debugShowCheckedModeBanner: false,
       theme: appTheme(),
       home: auth == null ? const HomeScreen() : SessionGate(auth: auth!),

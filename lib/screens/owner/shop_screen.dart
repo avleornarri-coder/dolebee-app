@@ -2,21 +2,36 @@ import 'package:flutter/material.dart';
 
 import '../../state/app_store.dart';
 
-/// Delivery staff accounts, and logging out.
-class TeamScreen extends StatelessWidget {
+/// The shop's details, delivery staff accounts, and logging out.
+class ShopScreen extends StatelessWidget {
   final AppStore store;
   final VoidCallback? onLogout;
-  const TeamScreen({super.key, required this.store, this.onLogout});
+  const ShopScreen({super.key, required this.store, this.onLogout});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Team')),
+      appBar: AppBar(title: const Text('Shop')),
       body: ListenableBuilder(
         listenable: store,
         builder: (context, _) => ListView(
           padding: const EdgeInsets.all(12),
           children: [
+            const Padding(
+              padding: EdgeInsets.fromLTRB(4, 4, 4, 8),
+              child: Text('Shop details', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            ),
+            Card(
+              color: Colors.white,
+              child: ListTile(
+                leading: const Icon(Icons.storefront),
+                title: Text(store.shop.name),
+                subtitle: Text(store.shop.subtitle.isEmpty ? 'Add your area and opening hours' : store.shop.subtitle),
+                trailing: const Icon(Icons.edit),
+                onTap: () => _editShop(context),
+              ),
+            ),
+            const SizedBox(height: 16),
             const Padding(
               padding: EdgeInsets.fromLTRB(4, 4, 4, 8),
               child: Text('Delivery staff', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
@@ -46,6 +61,50 @@ class TeamScreen extends StatelessWidget {
             ],
           ],
         ),
+      ),
+    );
+  }
+
+  Future<void> _editShop(BuildContext context) async {
+    final shop = store.shop;
+    final name = TextEditingController(text: shop == ShopProfile.empty ? '' : shop.name);
+    final area = TextEditingController(text: shop.area);
+    final hours = TextEditingController(text: shop.hours);
+    final form = GlobalKey<FormState>();
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Shop details'),
+        content: Form(
+          key: form,
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            const Text('Customers see these at the top of the menu.', style: TextStyle(color: Colors.black54)),
+            TextFormField(
+              controller: name,
+              decoration: const InputDecoration(labelText: 'Shop name', hintText: 'e.g. Dolebee Fried Chicken'),
+              validator: (v) => v!.trim().isEmpty ? 'Required' : null,
+            ),
+            TextFormField(
+              controller: area,
+              decoration: const InputDecoration(labelText: 'Area', hintText: 'e.g. Poblacion, Hinunangan'),
+            ),
+            TextFormField(
+              controller: hours,
+              decoration: const InputDecoration(labelText: 'Opening hours', hintText: 'e.g. Open until 9 PM'),
+            ),
+          ]),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancel')),
+          FilledButton(
+            onPressed: () {
+              if (!form.currentState!.validate()) return;
+              store.saveShop(ShopProfile(name: name.text.trim(), area: area.text.trim(), hours: hours.text.trim()));
+              Navigator.of(context).pop();
+            },
+            child: const Text('Save'),
+          ),
+        ],
       ),
     );
   }

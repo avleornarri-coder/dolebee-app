@@ -2,12 +2,12 @@ import 'dart:math';
 
 final _random = Random();
 
-/// A new order number, e.g. DB-1022-1435-482 (date, time, then a random
+/// A new order number, e.g. OL-1022-1435-482 (date, time, then a random
 /// part so two orders in the same minute don't clash).
 String newOrderId([DateTime? at]) {
   final t = at ?? DateTime.now();
   String two(int n) => n.toString().padLeft(2, '0');
-  return 'DB-${two(t.month)}${two(t.day)}-${two(t.hour)}${two(t.minute)}-${100 + _random.nextInt(900)}';
+  return 'OL-${two(t.month)}${two(t.day)}-${two(t.hour)}${two(t.minute)}-${100 + _random.nextInt(900)}';
 }
 
 enum PaymentMethod { gcashQr, cashOnDelivery }

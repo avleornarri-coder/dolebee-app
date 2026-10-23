@@ -1,7 +1,7 @@
-import 'package:dolebee_app/data/firebase_backend.dart';
-import 'package:dolebee_app/models/menu_item.dart';
-import 'package:dolebee_app/models/order.dart';
-import 'package:dolebee_app/state/app_store.dart';
+import 'package:orderlokal/data/firebase_backend.dart';
+import 'package:orderlokal/models/menu_item.dart';
+import 'package:orderlokal/models/order.dart';
+import 'package:orderlokal/state/app_store.dart';
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -32,24 +32,24 @@ void main() {
     final other = AppStore(backend: FirebaseBackend(db, customerUid: 'cust-2'), customerUid: 'cust-2');
 
     owner.saveMenuItem(const MenuItem(id: 'c1', name: '1pc Chicken with Rice', category: 'Chicken', pricePhp: 105));
-    customer.placeOrder(_order('DB-1', 'cust-1', DateTime(2026, 10, 23, 10)));
+    customer.placeOrder(_order('OL-1', 'cust-1', DateTime(2026, 10, 23, 10)));
     await _settle();
 
     expect(customer.menu.single.pricePhp, 105);
-    expect(owner.orders.single.id, 'DB-1');
+    expect(owner.orders.single.id, 'OL-1');
     expect(owner.riders.single.name, 'Jun');
-    expect(customer.customerOrders.single.id, 'DB-1');
+    expect(customer.customerOrders.single.id, 'OL-1');
     expect(other.customerOrders, isEmpty);
 
-    owner.setStatus('DB-1', OrderStatus.cooking);
-    owner.sendOut('DB-1', 'rider-1');
+    owner.setStatus('OL-1', OrderStatus.cooking);
+    owner.sendOut('OL-1', 'rider-1');
     await _settle();
     expect(customer.customerOrders.single.status, OrderStatus.outForDelivery);
 
     final rider = AppStore(backend: FirebaseBackend(db, riderUid: 'rider-1'));
     await _settle();
-    expect(rider.ordersForRider('rider-1').single.id, 'DB-1');
-    rider.markDelivered('DB-1', cashReceived: true);
+    expect(rider.ordersForRider('rider-1').single.id, 'OL-1');
+    rider.markDelivered('OL-1', cashReceived: true);
     await _settle();
     expect(owner.cashOnHand('rider-1'), 119);
 
@@ -64,6 +64,19 @@ void main() {
   });
 
   test('order numbers carry the date and time', () {
-    expect(newOrderId(DateTime(2026, 10, 23, 9, 5)), matches(RegExp(r'^DB-1023-0905-\d{3}$')));
+    expect(newOrderId(DateTime(2026, 10, 23, 9, 5)), matches(RegExp(r'^OL-1023-0905-\d{3}$')));
+  });
+
+  test('the owner sets the shop details and customers see them', () async {
+    final db = FakeFirebaseFirestore();
+    final owner = AppStore(backend: FirebaseBackend(db));
+    final customer = AppStore(backend: FirebaseBackend(db, customerUid: 'cust-1'), customerUid: 'cust-1');
+    await _settle();
+    expect(customer.shop.name, 'OrderLokal');
+
+    owner.saveShop(const ShopProfile(name: 'Dolebee Fried Chicken', area: 'Poblacion, Hinunangan'));
+    await _settle();
+    expect(customer.shop.name, 'Dolebee Fried Chicken');
+    expect(customer.shop.subtitle, 'Poblacion, Hinunangan');
   });
 }

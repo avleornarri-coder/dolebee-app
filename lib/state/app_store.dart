@@ -6,9 +6,11 @@ import '../data/backend.dart';
 import '../data/sample_menu.dart';
 import '../models/menu_item.dart';
 import '../models/order.dart';
+import '../models/shop_profile.dart';
 import '../services/daily_sales.dart';
 
 export '../data/backend.dart' show Rider;
+export '../models/shop_profile.dart';
 
 /// Menu, orders, and delivery staff shared by the customer, owner, and
 /// delivery staff screens. With a [Backend] (Firebase on phones) every
@@ -20,6 +22,7 @@ class AppStore extends ChangeNotifier {
   final List<Order> _orders = [];
   final List<Rider> _riders;
   final List<StreamSubscription> _subs = [];
+  ShopProfile _shop = ShopProfile.empty;
 
   /// Firebase account of the customer on this phone, when signed in.
   final String? customerUid;
@@ -30,6 +33,10 @@ class AppStore extends ChangeNotifier {
     final b = backend;
     if (b == null) return;
     _subs
+      ..add(b.watchShop().listen((shop) {
+        _shop = shop;
+        notifyListeners();
+      }))
       ..add(b.watchMenu().listen((items) => _replace(_menu, items)))
       ..add(b.watchOrders().listen((orders) => _replace(_orders, orders)))
       ..add(b.watchRiders().listen((riders) => _replace(_riders, riders)));
@@ -48,6 +55,17 @@ class AppStore extends ChangeNotifier {
       s.cancel();
     }
     super.dispose();
+  }
+
+  ShopProfile get shop => _shop;
+
+  void saveShop(ShopProfile shop) {
+    if (backend != null) {
+      backend!.saveShop(shop);
+      return;
+    }
+    _shop = shop;
+    notifyListeners();
   }
 
   List<Rider> get riders => List.unmodifiable(_riders);
