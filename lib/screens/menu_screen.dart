@@ -12,7 +12,10 @@ import 'theme.dart';
 class MenuScreen extends StatefulWidget {
   final AppStore store;
   final Cart cart;
-  const MenuScreen({super.key, required this.store, required this.cart});
+
+  /// Opens the owner and delivery staff login; only on phones with Firebase.
+  final VoidCallback? onStaffLogin;
+  const MenuScreen({super.key, required this.store, required this.cart, this.onStaffLogin});
 
   @override
   State<MenuScreen> createState() => _MenuScreenState();
@@ -51,6 +54,13 @@ class _MenuScreenState extends State<MenuScreen> {
             ),
             onPressed: () => _openMyOrders(context),
           ),
+          if (widget.onStaffLogin != null)
+            PopupMenuButton<void>(
+              tooltip: 'More',
+              itemBuilder: (_) => [
+                PopupMenuItem(onTap: widget.onStaffLogin, child: const Text('Staff login')),
+              ],
+            ),
         ],
       ),
       body: Column(

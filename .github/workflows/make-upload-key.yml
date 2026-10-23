@@ -1,0 +1,36 @@
+name: Make upload key
+
+# One-time helper for owners without Java on their computer. Creates the key
+# that signs uploads to Google Play and offers it as a download for one day.
+# Save the file and passwords somewhere safe, add them as repository secrets,
+# then delete this run.
+on:
+  workflow_dispatch:
+
+jobs:
+  key:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - run: |
+          mkdir upload-key
+          PASSWORD=$(openssl rand -base64 18 | tr -d '/+=')
+          keytool -genkeypair -v -keystore upload-key/upload-keystore.jks -storetype JKS \
+            -keyalg RSA -keysize 2048 -validity 10000 -alias upload \
+            -storepass "$PASSWORD" -keypass "$PASSWORD" -dname "CN=Dolebee, C=PH"
+          base64 -w0 upload-key/upload-keystore.jks > upload-key/ANDROID_KEYSTORE_BASE64.txt
+          {
+            echo "Add these as repository secrets (Settings > Secrets and variables > Actions):"
+            echo "ANDROID_KEYSTORE_BASE64 = the contents of ANDROID_KEYSTORE_BASE64.txt"
+            echo "ANDROID_KEYSTORE_PASSWORD = $PASSWORD"
+            echo "ANDROID_KEY_ALIAS = upload"
+            echo "ANDROID_KEY_PASSWORD = $PASSWORD"
+          } > upload-key/SECRETS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: upload-key
+          path: upload-key/
+          retention-days: 1
