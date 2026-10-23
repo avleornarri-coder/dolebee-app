@@ -20,7 +20,7 @@ jobs:
           PASSWORD=$(openssl rand -base64 18 | tr -d '/+=')
           keytool -genkeypair -v -keystore upload-key/upload-keystore.jks -storetype JKS \
             -keyalg RSA -keysize 2048 -validity 10000 -alias upload \
-            -storepass "$PASSWORD" -keypass "$PASSWORD" -dname "CN=Dolebee, C=PH"
+            -storepass "$PASSWORD" -keypass "$PASSWORD" -dname "CN=OrderLokal, C=PH"
           base64 -w0 upload-key/upload-keystore.jks > upload-key/ANDROID_KEYSTORE_BASE64.txt
           {
             echo "Add these as repository secrets (Settings > Secrets and variables > Actions):"

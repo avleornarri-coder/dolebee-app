@@ -1,6 +1,13 @@
-# Dolebee ordering app
+# OrderLokal
 
-Phone ordering and delivery app for Dolebee fried chicken in Poblacion, Hinunangan, Southern Leyte. One Flutter app (Android first) on Firebase, with three roles: customer, owner, and delivery staff.
+Phone ordering and delivery app for local shops. One Flutter app (Android first) on Firebase, with three roles: customer, owner, and delivery staff. Each shop gets its own copy of the app under its own name. The first is Dolebee Fried Chicken in Poblacion, Hinunangan, Southern Leyte.
+
+## Making the app for a shop
+
+- `lib/shop_config.dart`: the shop's name, area, opening hours and colors.
+- `android/app/build.gradle.kts`: `applicationId` set to `com.orderlokal.<shop>`, for example `com.orderlokal.dolebee`.
+- `lib/firebase_config.dart`: the shop's own Firebase project, so each shop's orders stay separate.
+- `android/app/src/main/AndroidManifest.xml`: `android:label`, the name under the app icon.
 
 ## What is here
 
@@ -33,7 +40,7 @@ On a phone connected to Firebase, customers order without an account. The owner 
 
 ## Connect Firebase
 
-1. In the Firebase console, create a project and add an Android app with the package name `ph.dolebee.app`.
+1. In the Firebase console, create a project and add an Android app with the package name from `applicationId`, `com.orderlokal.dolebee` for Dolebee.
 2. Turn on Authentication with the Anonymous and Email/Password sign-in methods.
 3. Create a Firestore database, then paste `firestore.rules` into its Rules tab and publish.
 4. Download `google-services.json` and copy its values into `lib/firebase_config.dart`. The file has the field names to look for.
