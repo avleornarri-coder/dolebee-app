@@ -1,4 +1,4 @@
-import 'package:dolebee_app/main.dart';
+import 'package:orderlokal/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -8,7 +8,7 @@ void main() {
     tester.view.devicePixelRatio = 2.5;
     addTearDown(tester.view.reset);
 
-    await tester.pumpWidget(const DolebeeApp());
+    await tester.pumpWidget(const OrderingApp());
     await tester.tap(find.text('Customer'));
     await tester.pumpAndSettle();
     await tester.tap(find.byTooltip('Add 1pc Chicken with Rice'));

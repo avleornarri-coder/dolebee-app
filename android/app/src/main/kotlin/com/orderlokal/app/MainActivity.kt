@@ -1,4 +1,4 @@
-package ph.dolebee.dolebee_app
+package com.orderlokal.app
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -8,12 +8,26 @@ service cloud.firestore {
     function isOwner() { return signedIn() && role() == 'owner'; }
     function isRider() { return signedIn() && role() == 'rider'; }
 
+    // The shop's name, area, and hours, shown on the menu.
+    match /config/shop {
+      allow read: if true;
+      allow write: if isOwner();
+    }
+
+    // Set once, when the owner account is created.
+    match /config/store {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.resource.data.ownerUid == request.auth.uid;
+    }
+
     match /users/{uid} {
       allow read: if signedIn() && (request.auth.uid == uid || isOwner());
-      // Customers create their own profile; roles are set by the owner only.
+      // The first owner, in the same write as config/store.
       allow create: if signedIn() && request.auth.uid == uid
-                    && request.resource.data.role == 'customer';
-      allow update: if isOwner();
+                    && request.resource.data.role == 'owner'
+                    && getAfter(/databases/$(database)/documents/config/store).data.ownerUid == uid;
+      // The owner adds and edits delivery staff.
+      allow create, update: if isOwner() && request.resource.data.role == 'rider';
     }
 
     match /menu/{itemId} {
@@ -22,12 +36,15 @@ service cloud.firestore {
     }
 
     match /orders/{orderId} {
-      allow create: if signedIn() && request.resource.data.customerId == request.auth.uid;
-      allow read: if signedIn() && (resource.data.customerId == request.auth.uid
+      // Customers (signed in without an account) place their own orders.
+      allow create: if signedIn() && request.resource.data.customerUid == request.auth.uid
+                    && request.resource.data.status in ['received', 'awaitingPayment'];
+      allow read: if signedIn() && (resource.data.customerUid == request.auth.uid
                     || isOwner()
                     || (isRider() && resource.data.riderId == request.auth.uid));
       allow update: if isOwner()
-                    || (isRider() && resource.data.riderId == request.auth.uid);
+                    || (isRider() && resource.data.riderId == request.auth.uid
+                        && request.resource.data.riderId == request.auth.uid);
     }
   }
 }

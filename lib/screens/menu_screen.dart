@@ -12,7 +12,10 @@ import 'theme.dart';
 class MenuScreen extends StatefulWidget {
   final AppStore store;
   final Cart cart;
-  const MenuScreen({super.key, required this.store, required this.cart});
+
+  /// Opens the owner and delivery staff login; only on phones with Firebase.
+  final VoidCallback? onStaffLogin;
+  const MenuScreen({super.key, required this.store, required this.cart, this.onStaffLogin});
 
   @override
   State<MenuScreen> createState() => _MenuScreenState();
@@ -34,11 +37,12 @@ class _MenuScreenState extends State<MenuScreen> {
     final active = widget.store.customerActiveOrders;
     return Scaffold(
       appBar: AppBar(
-        title: const Column(
+        title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Dolebee Fried Chicken', style: TextStyle(fontWeight: FontWeight.bold)),
-            Text('Poblacion, Hinunangan · Open until 9 PM', style: TextStyle(fontSize: 12)),
+            Text(widget.store.shop.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+            if (widget.store.shop.subtitle.isNotEmpty)
+              Text(widget.store.shop.subtitle, style: const TextStyle(fontSize: 12)),
           ],
         ),
         actions: [
@@ -51,6 +55,13 @@ class _MenuScreenState extends State<MenuScreen> {
             ),
             onPressed: () => _openMyOrders(context),
           ),
+          if (widget.onStaffLogin != null)
+            PopupMenuButton<void>(
+              tooltip: 'More',
+              itemBuilder: (_) => [
+                PopupMenuItem(onTap: widget.onStaffLogin, child: const Text('Staff login')),
+              ],
+            ),
         ],
       ),
       body: Column(

@@ -38,8 +38,9 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   Order _buildOrder() => Order(
-        id: 'DB-${DateTime.now().millisecondsSinceEpoch % 100000}',
-        customerId: _phone.text,
+        id: newOrderId(),
+        customerId: _phone.text.replaceAll(' ', ''),
+        customerUid: widget.store.customerUid ?? '',
         customerName: _name.text.trim(),
         lines: cart.toLines(),
         deliveryFeePhp: _zone.feePhp,
@@ -113,7 +114,7 @@ class _CartScreenState extends State<CartScreen> {
                     DropdownButtonFormField<DeliveryZone>(
                       initialValue: _zone,
                       isExpanded: true,
-                      decoration: const InputDecoration(labelText: 'Distance from Poblacion'),
+                      decoration: const InputDecoration(labelText: 'Distance from the store'),
                       items: [
                         for (final z in DeliveryZone.zones)
                           DropdownMenuItem(

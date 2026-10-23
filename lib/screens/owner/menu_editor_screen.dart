@@ -6,6 +6,8 @@ import '../theme.dart';
 
 /// Lets the owner set real names and prices, mark items sold out, and add
 /// or remove items without any coding.
+const _defaultCategories = ['Chicken', 'Buckets', 'Sides', 'Drinks'];
+
 class MenuEditorScreen extends StatelessWidget {
   final AppStore store;
   const MenuEditorScreen({super.key, required this.store});
@@ -21,7 +23,20 @@ class MenuEditorScreen extends StatelessWidget {
       ),
       body: ListenableBuilder(
         listenable: store,
-        builder: (context, _) => ListView(
+        builder: (context, _) => store.menu.isEmpty
+            ? Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(mainAxisSize: MainAxisSize.min, children: [
+                    const Text('Your menu is empty. Add your items one by one, or start from the '
+                        'sample menu and change the names and prices.',
+                        textAlign: TextAlign.center),
+                    const SizedBox(height: 12),
+                    OutlinedButton(onPressed: store.loadSampleMenu, child: const Text('Load sample menu')),
+                  ]),
+                ),
+              )
+            : ListView(
           padding: const EdgeInsets.fromLTRB(12, 12, 12, 88),
           children: [
             for (final category in store.categories) ...[
@@ -57,7 +72,8 @@ class MenuEditorScreen extends StatelessWidget {
   Future<void> _edit(BuildContext context, MenuItem? item) async {
     final name = TextEditingController(text: item?.name);
     final price = TextEditingController(text: item?.pricePhp.toString());
-    var category = item?.category ?? store.categories.first;
+    final categories = {..._defaultCategories, ...store.categories}.toList();
+    var category = item?.category ?? categories.first;
     final form = GlobalKey<FormState>();
     await showDialog<void>(
       context: context,
@@ -82,7 +98,7 @@ class MenuEditorScreen extends StatelessWidget {
                 initialValue: category,
                 decoration: const InputDecoration(labelText: 'Category'),
                 items: [
-                  for (final c in store.categories) DropdownMenuItem(value: c, child: Text(c)),
+                  for (final c in categories) DropdownMenuItem(value: c, child: Text(c)),
                 ],
                 onChanged: (c) => setState(() => category = c!),
               ),

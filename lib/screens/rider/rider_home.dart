@@ -9,12 +9,19 @@ import '../theme.dart';
 class RiderHome extends StatelessWidget {
   final AppStore store;
   final Rider rider;
-  const RiderHome({super.key, required this.store, required this.rider});
+  final VoidCallback? onLogout;
+  const RiderHome({super.key, required this.store, required this.rider, this.onLogout});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Deliveries · ${rider.name}')),
+      appBar: AppBar(
+        title: Text('Deliveries · ${rider.name}'),
+        actions: [
+          if (onLogout != null)
+            IconButton(tooltip: 'Log out', icon: const Icon(Icons.logout), onPressed: onLogout),
+        ],
+      ),
       body: ListenableBuilder(
         listenable: store,
         builder: (context, _) {

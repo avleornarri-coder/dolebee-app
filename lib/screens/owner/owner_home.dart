@@ -4,10 +4,12 @@ import '../../state/app_store.dart';
 import 'menu_editor_screen.dart';
 import 'orders_screen.dart';
 import 'sales_screen.dart';
+import 'shop_screen.dart';
 
 class OwnerHome extends StatefulWidget {
   final AppStore store;
-  const OwnerHome({super.key, required this.store});
+  final VoidCallback? onLogout;
+  const OwnerHome({super.key, required this.store, this.onLogout});
 
   @override
   State<OwnerHome> createState() => _OwnerHomeState();
@@ -22,6 +24,7 @@ class _OwnerHomeState extends State<OwnerHome> {
       OrdersScreen(store: widget.store),
       SalesScreen(store: widget.store),
       MenuEditorScreen(store: widget.store),
+      ShopScreen(store: widget.store, onLogout: widget.onLogout),
     ];
     return Scaffold(
       body: pages[_tab],
@@ -43,6 +46,7 @@ class _OwnerHomeState extends State<OwnerHome> {
               ),
               const NavigationDestination(icon: Icon(Icons.bar_chart), label: 'Sales'),
               const NavigationDestination(icon: Icon(Icons.restaurant_menu), label: 'Menu'),
+              const NavigationDestination(icon: Icon(Icons.storefront), label: 'Shop'),
             ],
           );
         },

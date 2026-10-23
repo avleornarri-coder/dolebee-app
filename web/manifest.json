@@ -1,6 +1,6 @@
 {
-    "name": "dolebee_app",
-    "short_name": "dolebee_app",
+    "name": "OrderLokal",
+    "short_name": "OrderLokal",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

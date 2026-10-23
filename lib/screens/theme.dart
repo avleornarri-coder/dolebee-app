@@ -7,7 +7,7 @@ const brandCream = Color(0xFFFFF6EA);
 final _peso = NumberFormat.currency(locale: 'en_PH', symbol: '₱', decimalDigits: 0);
 String peso(int amount) => _peso.format(amount);
 
-ThemeData dolebeeTheme() => ThemeData(
+ThemeData appTheme() => ThemeData(
       colorScheme: ColorScheme.fromSeed(seedColor: brandOrange, primary: brandOrange),
       scaffoldBackgroundColor: brandCream,
       useMaterial3: true,

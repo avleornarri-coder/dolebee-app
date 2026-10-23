@@ -39,10 +39,10 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             const SizedBox(height: 24),
             const Icon(Icons.set_meal, size: 72, color: brandOrange),
-            const Text('Dolebee Fried Chicken',
+            const Text('OrderLokal',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
-            const Text('Poblacion, Hinunangan',
+            const Text('Ordering and delivery for local shops',
                 textAlign: TextAlign.center, style: TextStyle(color: Colors.black54)),
             const SizedBox(height: 32),
             const Text('Preview as:', style: TextStyle(fontWeight: FontWeight.w600)),

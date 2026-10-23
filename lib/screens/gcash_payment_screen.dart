@@ -73,7 +73,7 @@ class _GcashPaymentScreenState extends State<GcashPaymentScreen> {
                     child: const Icon(Icons.qr_code_2, size: 160, color: Color(0xFF007DFE)),
                   ),
                   const SizedBox(height: 8),
-                  const Text('Dolebee Fried Chicken · GCash'),
+                  Text('${widget.store.shop.name} · GCash'),
                 ]),
               ),
             ),

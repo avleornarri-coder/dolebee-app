@@ -1,3 +1,15 @@
+import 'dart:math';
+
+final _random = Random();
+
+/// A new order number, e.g. OL-1022-1435-482 (date, time, then a random
+/// part so two orders in the same minute don't clash).
+String newOrderId([DateTime? at]) {
+  final t = at ?? DateTime.now();
+  String two(int n) => n.toString().padLeft(2, '0');
+  return 'OL-${two(t.month)}${two(t.day)}-${two(t.hour)}${two(t.minute)}-${100 + _random.nextInt(900)}';
+}
+
 enum PaymentMethod { gcashQr, cashOnDelivery }
 
 /// Order lifecycle. GCash orders wait in [awaitingPayment] until the owner
@@ -43,7 +55,11 @@ class OrderLine {
 
 class Order {
   final String id;
+  /// The customer's mobile number.
   final String customerId;
+
+  /// The customer's Firebase account, so they can see their own orders.
+  final String customerUid;
   final String customerName;
   final List<OrderLine> lines;
   final int deliveryFeePhp;
@@ -66,6 +82,7 @@ class Order {
   const Order({
     required this.id,
     required this.customerId,
+    this.customerUid = '',
     this.customerName = '',
     required this.lines,
     required this.deliveryFeePhp,
@@ -97,6 +114,7 @@ class Order {
       Order(
         id: id,
         customerId: customerId,
+        customerUid: customerUid,
         customerName: customerName,
         lines: lines,
         deliveryFeePhp: deliveryFeePhp,
@@ -116,6 +134,7 @@ class Order {
 
   Map<String, dynamic> toMap() => {
         'customerId': customerId,
+        'customerUid': customerUid,
         'customerName': customerName,
         'lines': lines.map((l) => l.toMap()).toList(),
         'deliveryFeePhp': deliveryFeePhp,
@@ -138,6 +157,7 @@ class Order {
   factory Order.fromMap(String id, Map<String, dynamic> data) => Order(
         id: id,
         customerId: data['customerId'] as String,
+        customerUid: data['customerUid'] as String? ?? '',
         customerName: data['customerName'] as String? ?? '',
         lines: (data['lines'] as List)
             .map((l) => OrderLine.fromMap(Map<String, dynamic>.from(l)))
